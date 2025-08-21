@@ -1,0 +1,26 @@
+{
+  "name": "semana3-12pts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/index.js localhost 3333"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lab-de-Solucoes-Tecnologicas/semana3-12pts.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Lab-de-Solucoes-Tecnologicas/semana3-12pts/issues"
+  },
+  "homepage": "https://github.com/Lab-de-Solucoes-Tecnologicas/semana3-12pts#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  }
+}
