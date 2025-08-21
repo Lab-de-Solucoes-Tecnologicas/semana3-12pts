@@ -46,27 +46,6 @@ function dateFormated() {
   return `${day}/${month}/${year}`
 }
 
-app.post('/register/employee', verifyIfEmployeeAlrealdyExists, (req, res) => {
-  const { name, employeeRegistration, password, cpf, email, birthDate, cellPhone } = req.body
-  employees.push({
-    name: nameFormated(name),
-    employeeRegistration,
-    cpf: cpfFormated(cpf),
-    password,
-    email,
-    birthDate,
-    cellPhone: cellFormated(cellPhone),
-    createdAt: dateFormated(),
-    class: []
-  })
-  return res.status(201).send()
-})
-
-app.post('/register/class', verifyIfEmployeeAlrealdyExists, (req, res) => {
-  const { name, id } = req.body
-  classes.push({ name, id, createdAt: dateFormated() })
-  return res.status(201).send()
-})
 function verifyLogin(req, res, next) {
     const {cpf, password} = req.headers;
     const searchByCPF = employees.find((searchByCPF) =>
@@ -99,6 +78,28 @@ function verifyIfEmployeeExists(req, res, next) {
     };
     return next();
 };
+
+app.post('/register/employee', verifyIfEmployeeAlrealdyExists, (req, res) => {
+  const { name, employeeRegistration, password, cpf, email, birthDate, cellPhone } = req.body
+  employees.push({
+    name: nameFormated(name),
+    employeeRegistration,
+    cpf: cpfFormated(cpf),
+    password,
+    email,
+    birthDate,
+    cellPhone: cellFormated(cellPhone),
+    createdAt: dateFormated(),
+    class: []
+  })
+  return res.status(201).send()
+})
+
+app.post('/register/class', verifyIfEmployeeAlrealdyExists, (req, res) => {
+  const { name, id } = req.body
+  classes.push({ name, id, createdAt: dateFormated() })
+  return res.status(201).send()
+})
 
 app.get("/search/name", (req, res)=>{
     const {name} = req.body;
