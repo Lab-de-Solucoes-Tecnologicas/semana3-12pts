@@ -46,6 +46,36 @@ function dateFormated() {
   return `${day}/${month}/${year}`
 }
 
+function verifyIfEmployeeExists(req, res, next) {
+    const { employeeRegistration } = req.body
+    const employee = employees.find(employee => employee.employeeRegistration === employeeRegistration)
+    if (!employee) {
+        return res.status(400).json({ error: 'Employee not found!' })
+    }
+    req.employee = employee
+    return next()
+}
+
+function verifyIfClassExists(req, res, next) {
+    const { id } = req.body
+    const classId = classes.find(classId => classId.id === id)
+    if (!classId) {
+        return res.status(400).json({ error: 'Class not found!' })
+    }
+    req.classId = classId
+    return next()
+}
+
+function verifyIfClassAlreadyLinkedEmployee(req, res, next) {
+    const { id } = req.body
+    const { employee } = req
+    if (employee.class.indexOf(id) === -1) {
+        return next()
+    } else {
+        return res.status(400).json({ error: 'Class already linked!' })
+    }
+}
+
 function verifyLogin(req, res, next) {
     const {cpf, password} = req.headers;
     const searchByCPF = employees.find((searchByCPF) =>
@@ -65,7 +95,7 @@ function verifyLogin(req, res, next) {
     };
 };
 
-function verifyIfEmployeeExists(req, res, next) {
+function verifyClassLinkedEmployee(req, res, next) {
     const {classId} = req;
     for(const valueEmployee of employees) {
         for(const valueClass of valueEmployee.class) {
@@ -95,10 +125,35 @@ app.post('/register/employee', verifyIfEmployeeAlrealdyExists, (req, res) => {
   return res.status(201).send()
 })
 
-app.post('/register/class', verifyIfEmployeeAlrealdyExists, (req, res) => {
+app.post('/register/class', verifyIfClassAlreadyExists, (req, res) => {
   const { name, id } = req.body
   classes.push({ name, id, createdAt: dateFormated() })
   return res.status(201).send()
+})
+
+app.patch('/register/employee/class', verifyIfEmployeeExists, verifyIfClassExists, verifyIfClassAlreadyLinkedEmployee, (req, res) => {
+    const { employee } = req
+    const { id } = req.body
+    employee.class.push(id)
+    return res.status(201).send()
+})
+
+app.get('/employees', (req, res) => {
+    return res.status(200).send(employees)
+})
+
+app.get('/search/registration', verifyIfEmployeeExists, (req, res) => {
+    const { employee } = req
+    return res.status(200).send(employee)
+})
+
+app.get('/search/cpf', (req, res) => {
+    const { cpf } = req.body
+    const searchByCPF = employees.find(searchByCPF => searchByCPF.cpf === cpfFormated(cpf))
+    if (!searchByCPF) {
+        return res.status(400).json({ error: 'Employee not found!' })
+    }
+    return res.status(200).send(searchByCPF)
 })
 
 app.get("/search/name", (req, res)=>{
@@ -153,5 +208,12 @@ app.delete("/employee", verifyIfEmployeeExists, (req, res)=>{
     employees.splice(index, 1);
     return res.status(200).json(employees);
 });
+
+app.delete('/class', verifyIfClassExists, verifyClassLinkedEmployee, (req, res) => {
+    const { classId } = req
+    const index = classes.indexOf(classId)
+    classes.splice(index, 1)
+    return res.status(200).json(classes)
+})
 
 app.listen(3333)
