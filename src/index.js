@@ -79,7 +79,7 @@ function verifyIfClassAlreadyLinkedEmployee(req, res, next) {
 function verifyLogin(req, res, next) {
     const {cpf, password} = req.headers;
     const searchByCPF = employees.find((searchByCPF) =>
-        searchByCPF === cpfFormated(cpf)
+        searchByCPF.cpf === cpfFormated(cpf)
     );
     if(!searchByCPF) {
         return res.status(400).json({
